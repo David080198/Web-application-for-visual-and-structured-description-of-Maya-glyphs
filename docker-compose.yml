@@ -1,0 +1,60 @@
+version: '2'
+services:
+  app:
+    build: 
+      context: app
+    ports:
+      - "5500"
+    environment:
+      - SECRET_KEY="Z/p%RLT}EB:^[#^>SvaXpb#/,0qKQ%"
+      - SESSION_TYPE=filesystem
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=david1998
+      - MYSQL_HOST=db
+      - MYSQL_PORT=3306
+      - MYSQL_DB=base_grigori
+      - MAIL_SERVER=smtp.gmail.com
+      - MAIL_PORT=3305
+      - MAIL_USERNAME=glifosmayascicipn@gmail.com
+      - MAIL_PASSWORD=djidujmnparrakgk
+      - MAIL_USE_TLS=False
+      - MAIL_USE_SSL=True
+
+
+  db:
+    container_name: db
+    restart: always
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: david1998
+      
+    ports:
+      - '3308:3306'
+
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d:rw
+      - ./db_data14:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    expose:
+      - 80
+    ports:
+      - '82:80'
+    environment:
+      - PMA_HOST = db
+      - PMA_USER = 'root'
+      - PMA_PASSWORD = 'david1998'
+
+    depends_on: 
+      - db
+
+  nginx:
+    image: nginx:latest
+    volumes: 
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - app
+    ports:
+      - "81:81"
